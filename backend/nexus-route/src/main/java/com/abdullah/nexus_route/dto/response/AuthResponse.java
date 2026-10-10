@@ -1,4 +1,4 @@
-package com.abdullah.nexus_route.dto;
+package com.abdullah.nexus_route.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,5 +14,5 @@ public class AuthResponse {
     @Builder.Default
     private String tokenType = "Bearer";
     private Long expiresIn;
-    private UserDto user;
+    private UserResponse user;
 }

@@ -1,6 +1,6 @@
 package com.abdullah.nexus_route.exception;
 
-import com.abdullah.nexus_route.dto.ErrorResponse;
+import com.abdullah.nexus_route.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

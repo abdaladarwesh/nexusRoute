@@ -1,7 +1,7 @@
 package com.abdullah.nexus_route.service;
 
-import com.abdullah.nexus_route.dto.PlaceResponse;
+import com.abdullah.nexus_route.dto.response.PlaceResponse;
 
-public interface PlaceService {
-    PlaceResponse getPlaceNameByLanAndLon(Double longitude, Double latitude);
+public interface PlaceDetailsService {
+    PlaceResponse getPlaceDetailsByLonAndLat(Double longitude, Double latitude);
 }

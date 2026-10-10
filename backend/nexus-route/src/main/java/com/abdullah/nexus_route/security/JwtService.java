@@ -1,4 +1,4 @@
-package com.abdullah.nexus_route.service.impl;
+package com.abdullah.nexus_route.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtServiceImpl {
+public class JwtService {
 
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;

@@ -1,4 +1,4 @@
-package com.abdullah.nexus_route.config;
+package com.abdullah.nexus_route.security;
 
 import com.abdullah.nexus_route.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

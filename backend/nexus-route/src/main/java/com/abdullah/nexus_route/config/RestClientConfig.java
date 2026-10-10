@@ -1,2 +1,13 @@
-package com.abdullah.nexus_route.config;public class RestClientConfgi {
+package com.abdullah.nexus_route.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
+
+@Configuration
+public class RestClientConfig {
+    @Bean
+    RestClient getRestClient(){
+        return RestClient.create("https://nominatim.openstreetmap.org");
+    }
 }

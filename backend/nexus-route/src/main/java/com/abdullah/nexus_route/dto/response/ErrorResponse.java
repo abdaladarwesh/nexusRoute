@@ -1,4 +1,4 @@
-package com.abdullah.nexus_route.dto;
+package com.abdullah.nexus_route.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

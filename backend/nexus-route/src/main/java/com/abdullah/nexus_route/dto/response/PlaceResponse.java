@@ -1,5 +1,6 @@
-package com.abdullah.nexus_route.dto;
+package com.abdullah.nexus_route.dto.response;
 
+import com.abdullah.nexus_route.dto.response.AddressResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import java.util.List;
@@ -36,6 +37,6 @@ public class PlaceResponse {
     @JsonProperty("display_name")
     private String displayName;
 
-    private Address address;
+    private AddressResponse address;
     private List<String> boundingbox;
 }

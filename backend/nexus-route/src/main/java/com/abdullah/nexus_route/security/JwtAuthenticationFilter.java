@@ -1,6 +1,6 @@
-package com.abdullah.nexus_route.config;
+package com.abdullah.nexus_route.security;
 
-import com.abdullah.nexus_route.service.impl.JwtServiceImpl;
+import com.abdullah.nexus_route.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtServiceImpl jwtService;
+    private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     @Override

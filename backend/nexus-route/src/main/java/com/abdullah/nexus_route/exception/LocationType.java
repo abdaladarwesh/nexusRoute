@@ -1,2 +1,6 @@
-package com.abdullah.nexus_route.exception;public class LocationType {
+package com.abdullah.nexus_route.exception;
+
+public enum LocationType {
+    DESTINATION,
+    START
 }

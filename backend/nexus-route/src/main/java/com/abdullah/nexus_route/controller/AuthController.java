@@ -1,9 +1,9 @@
 package com.abdullah.nexus_route.controller;
 
-import com.abdullah.nexus_route.dto.AuthResponse;
-import com.abdullah.nexus_route.dto.LoginRequest;
-import com.abdullah.nexus_route.dto.RegisterRequest;
-import com.abdullah.nexus_route.dto.UserDto;
+import com.abdullah.nexus_route.dto.response.AuthResponse;
+import com.abdullah.nexus_route.dto.request.LoginRequest;
+import com.abdullah.nexus_route.dto.request.RegisterRequest;
+import com.abdullah.nexus_route.dto.response.UserResponse;
 import com.abdullah.nexus_route.entity.User;
 import com.abdullah.nexus_route.service.AuthService;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(authService.getCurrentUser(user));
     }
 }

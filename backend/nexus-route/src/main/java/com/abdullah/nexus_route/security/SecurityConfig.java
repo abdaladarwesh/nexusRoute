@@ -1,6 +1,6 @@
-package com.abdullah.nexus_route.config;
+package com.abdullah.nexus_route.security;
 
-import com.abdullah.nexus_route.dto.ErrorResponse;
+import com.abdullah.nexus_route.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

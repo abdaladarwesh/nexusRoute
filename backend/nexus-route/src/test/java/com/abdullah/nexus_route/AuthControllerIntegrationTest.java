@@ -1,8 +1,8 @@
 package com.abdullah.nexus_route;
 
-import com.abdullah.nexus_route.dto.AuthResponse;
-import com.abdullah.nexus_route.dto.LoginRequest;
-import com.abdullah.nexus_route.dto.RegisterRequest;
+import com.abdullah.nexus_route.dto.response.AuthResponse;
+import com.abdullah.nexus_route.dto.request.LoginRequest;
+import com.abdullah.nexus_route.dto.request.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

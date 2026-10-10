@@ -1,10 +1,10 @@
-package CustomMinHeap;
+package com.abdullah.nexus_route.model.CustomMinHeap;
 
 import java.util.Objects;
 
 public class HeapNode<T> {
     private T node;
-    private int value;
+    private Double value;
 
     public T getNode() {
         return node;
@@ -14,15 +14,15 @@ public class HeapNode<T> {
         this.node = node;
     }
 
-    public int getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
-    public HeapNode(T node, int value) {
+    public HeapNode(T node, Double value) {
         this.node = node;
         this.value = value;
     }

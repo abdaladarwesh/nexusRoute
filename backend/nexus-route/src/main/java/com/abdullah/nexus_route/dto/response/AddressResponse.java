@@ -1,10 +1,10 @@
-package com.abdullah.nexus_route.dto;
+package com.abdullah.nexus_route.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class Address {
+public class AddressResponse {
 
     private String road;
     private String neighbourhood;

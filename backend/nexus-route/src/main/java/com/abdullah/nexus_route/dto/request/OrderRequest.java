@@ -1,4 +1,4 @@
-package com.abdullah.nexus_route.dto;
+package com.abdullah.nexus_route.dto.request;
 
 import com.abdullah.nexus_route.entity.OrderPriority;
 import com.abdullah.nexus_route.entity.OrderStatus;

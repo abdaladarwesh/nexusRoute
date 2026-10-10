@@ -1,4 +1,4 @@
-package com.abdullah.nexus_route.dto;
+package com.abdullah.nexus_route.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

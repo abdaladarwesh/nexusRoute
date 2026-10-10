@@ -1,49 +1,66 @@
-package Graph;
+package com.abdullah.nexus_route.model.Graph;
 
-import CustomMinHeap.*;
+
+import com.abdullah.nexus_route.entity.CityNode;
+import com.abdullah.nexus_route.exception.LocationNotFoundException;
+import com.abdullah.nexus_route.exception.NoShortPathWasFoundException;
+import com.abdullah.nexus_route.model.CustomMinHeap.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Graph<T> {
 
 
-    Map<Node<T>, List<Edge<T>>> adjList = new HashMap<>();
+    ConcurrentMap<GraphNode<T>, List<GraphEdge<T>>> adjList = new ConcurrentHashMap<>();
 
-    public void addNodeToGraphIfNotExists(Node<T> node) {
-        adjList.putIfAbsent(node, new ArrayList<>());
+    public void addNodeToGraphIfNotExists(GraphNode<T> node) {
+        adjList.putIfAbsent(node, Collections.synchronizedList(new ArrayList<>()));
     }
 
-    public Node<T> createNode(T data) {
-        Node<T> node = new Node<>(data);
+    public GraphNode<T> addNodeIfNotExists(T data) {
+        GraphNode<T> node = new GraphNode<>(data);
         addNodeToGraphIfNotExists(node);
         return node;
     }
 
-    public void addEdge(Node<T> start, Node<T> destination, int weight) throws Exception {
-        if (start == null || destination == null) throw new Exception("Node Are Null");
+    public void addEdge(GraphNode<T> start, GraphNode<T> destination, Double weight) throws LocationNotFoundException {
+        addEdge(start, destination, weight, true);
+    }
+
+    public void addEdge(GraphNode<T> start, GraphNode<T> destination, Double weight, boolean bidirectional) throws LocationNotFoundException {
+        if (start == null) {
+            throw new LocationNotFoundException(start.getData() + "is null");
+        }
+        if (destination == null) {
+            throw new LocationNotFoundException(destination.getData() + "is null");
+        }
         addNodeToGraphIfNotExists(start);
         addNodeToGraphIfNotExists(destination);
-        Edge<T> edge = new Edge<T>(destination, weight);
+        GraphEdge<T> edge = new GraphEdge<T>(destination, weight);
         adjList.get(start).add(edge);
+        if (bidirectional) {
+            GraphEdge<T> reverseEdge = new GraphEdge<T>(start, weight);
+            adjList.get(destination).add(reverseEdge);
+        }
     }
 
 
+    public ShortestRouteReturn<T> findShortestRouteLog(GraphNode<T> start, GraphNode<T> destination) throws NoShortPathWasFoundException {
 
-
-    public Map<List<Node<T>>, Integer> findShortestRouteLog(Node<T> start, Node<T> destination) throws Exception {
-
-        Map<Node<T>, Integer> distances = new HashMap<>();
-        Map<Node<T>, Node<T>> previousNodes = new HashMap<>();
+        Map<GraphNode<T>, Double> distances = new HashMap<>();
+        Map<GraphNode<T>, GraphNode<T>> previousNodes = new HashMap<>();
 
         // initialize fields
-        MinHeap<Node<T>> heap = new MinHeap<Node<T>>();
-        heap.add(new HeapNode<Node<T>>(start, 0));
+        MinHeap<GraphNode<T>> heap = new MinHeap<GraphNode<T>>();
+        heap.add(new HeapNode<GraphNode<T>>(start, 0.0));
 
-        for (Node<T> node : adjList.keySet()) {
+        for (GraphNode<T> node : adjList.keySet()) {
             if (node.equals(start)) {
-                distances.put(node, 0);
+                distances.put(node, 0.0);
             } else {
-                distances.put(node, Integer.MAX_VALUE);
+                distances.put(node, Double.MAX_VALUE);
             }
             previousNodes.put(node, null);
         }
@@ -52,9 +69,9 @@ public class Graph<T> {
         while (!heap.isEmpty()) {
 
             // getting the smallest unvisited node in distance
-            HeapNode<Node<T>> smallestParent = heap.poll();
-            Node<T> currentNode = smallestParent.getNode();
-            int currentDistance = smallestParent.getValue();
+            HeapNode<GraphNode<T>> smallestParent = heap.poll();
+            GraphNode<T> currentNode = smallestParent.getNode();
+            Double currentDistance = smallestParent.getValue();
 
 
             if (currentNode == null) {
@@ -63,113 +80,116 @@ public class Graph<T> {
 
             if (currentNode.equals(destination)) {
 
-                // preparing the result
 
-                List<Node<T>> path = new ArrayList<>();
-                Node<T> startingNode = destination;
+                // preparing the result
+                List<GraphNode<T>> path = new ArrayList<>();
+                GraphNode<T> startingNode = destination;
                 while (startingNode != null) {
                     path.add(startingNode);
                     startingNode = previousNodes.get(startingNode);
                 }
                 Collections.reverse(path);
 
-                Map<List<Node<T>>, Integer> result = new HashMap<>();
-                result.put(path, currentDistance);
-                return result;
+                return ShortestRouteReturn.<T>builder()
+                        .distance(distances.get(destination))
+                        .path(path.stream().map(GraphNode::getData).toList())
+                        .build();
+
+
             }
 
             // relaxation for each edge in the node
-            List<Edge<T>> currentNodeEdges = adjList.get(currentNode);
-            for (Edge<T> edge : currentNodeEdges) {
-                Node<T> edgeDestination = edge.destination;
-                Integer edgeDestinationDistance = distances.get(edgeDestination);
-                if (edge.weight + currentDistance < edgeDestinationDistance) {
-                    distances.put(edgeDestination, edge.weight + currentDistance);
+            List<GraphEdge<T>> currentNodeEdges = adjList.get(currentNode);
+            for (GraphEdge<T> edge : currentNodeEdges) {
+                GraphNode<T> edgeDestination = edge.getDestination();
+                Double edgeDestinationDistance = distances.get(edgeDestination);
+                if (edge.getWeight() + currentDistance < edgeDestinationDistance) {
+                    distances.put(edgeDestination, edge.getWeight() + currentDistance);
                     previousNodes.put(edgeDestination, currentNode);
-                    heap.add(new HeapNode<>(edgeDestination, edge.weight + currentDistance));
+                    heap.add(new HeapNode<>(edgeDestination, edge.getWeight() + currentDistance));
                 }
 
             }
 
 
         }
-        throw new Exception("No Short path was found");
+        throw new NoShortPathWasFoundException("No Short path was found");
     }
 
 
-    public Map<List<Node<T>>, Integer> findShortestRouteLinear(Node<T> start, Node<T> destination) throws Exception {
-
-        List<Node<T>> unvisitedNodes = new ArrayList<>();
-        Map<Node<T>, Integer> distances = new HashMap<>();
-        Map<Node<T>, Node<T>> previousNodes = new HashMap<>();
-
-        // initialize fields
-        for (Node<T> node : adjList.keySet()) {
-            if (node.equals(start)) {
-                distances.put(node, 0);
-            } else {
-                distances.put(node, Integer.MAX_VALUE);
-            }
-            unvisitedNodes.add(node);
-            previousNodes.put(node, null);
-        }
-
-
-        while (!unvisitedNodes.isEmpty()) {
-
-            // getting the smallest unvisited node in distance
-            Node<T> currentNode = null;
-            Integer currentDistance = Integer.MAX_VALUE;
-
-            for (Node<T> node : unvisitedNodes) {
-                Integer currentNodeDistance = distances.get(node);
-                if (currentNodeDistance < currentDistance) {
-                    currentDistance = currentNodeDistance;
-                    currentNode = node;
-                }
-            }
-
-            if (currentNode == null) {
-                break;
-            }
-
-            if (currentNode.equals(destination)) {
-
-                // preparing the result
-
-                List<Node<T>> path = new ArrayList<>();
-                Node<T> startingNode = destination;
-                while (startingNode != null) {
-                    path.add(startingNode);
-                    startingNode = previousNodes.get(startingNode);
-                }
-
-                Collections.reverse(path);
-
-                Map<List<Node<T>>, Integer> result = new HashMap<>();
-                result.put(path, currentDistance);
-                return result;
-            }
-
-            // relaxation for each edge in the node
-            List<Edge<T>> currentNodeEdges = adjList.get(currentNode);
-            for (Edge<T> edge : currentNodeEdges) {
-                Node<T> edgeDestination = edge.destination;
-                Integer edgeDestinationDistance = distances.get(edgeDestination);
-                if (edge.weight + currentDistance < edgeDestinationDistance) {
-                    // if the distance is shorter
-                    distances.put(edgeDestination, edge.weight + currentDistance);
-                    previousNodes.put(edgeDestination, currentNode);
-                }
-
-            }
-
-            unvisitedNodes.remove(currentNode);
-
-        }
-
-        throw new Exception("No Short path was found");
-    }
-
+//    public Map<List<GraphNode<T>>, Integer> findShortestRouteLinear(GraphNode<T> start, GraphNode<T> destination) throws Exception {
+//
+//        List<GraphNode<T>> unvisitedNodes = new ArrayList<>();
+//        Map<GraphNode<T>, Integer> distances = new HashMap<>();
+//        Map<GraphNode<T>, GraphNode<T>> previousNodes = new HashMap<>();
+//
+//        // initialize fields
+//        for (GraphNode<T> node : adjList.keySet()) {
+//            if (node.equals(start)) {
+//                distances.put(node, 0);
+//            } else {
+//                distances.put(node, Integer.MAX_VALUE);
+//            }
+//            unvisitedNodes.add(node);
+//            previousNodes.put(node, null);
+//        }
+//
+//
+//        while (!unvisitedNodes.isEmpty()) {
+//
+//            // getting the smallest unvisited node in distance
+//            GraphNode<T> currentNode = null;
+//            Integer currentDistance = Integer.MAX_VALUE;
+//
+//            for (GraphNode<T> node : unvisitedNodes) {
+//                Integer currentNodeDistance = distances.get(node);
+//                if (currentNodeDistance < currentDistance) {
+//                    currentDistance = currentNodeDistance;
+//                    currentNode = node;
+//                }
+//            }
+//
+//            if (currentNode == null) {
+//                break;
+//            }
+//
+//            if (currentNode.equals(destination)) {
+//
+//                // preparing the result
+//
+//                List<GraphNode<T>> path = new ArrayList<>();
+//                GraphNode<T> startingNode = destination;
+//                while (startingNode != null) {
+//                    path.add(startingNode);
+//                    startingNode = previousNodes.get(startingNode);
+//                }
+//
+//                Collections.reverse(path);
+//
+//                Map<List<GraphNode<T>>, Integer> result = new HashMap<>();
+//                result.put(path, currentDistance);
+//                return result;
+//            }
+//
+//            // relaxation for each edge in the node
+//            List<GraphEdge<T>> currentNodeEdges = adjList.get(currentNode);
+//            for (GraphEdge<T> edge : currentNodeEdges) {
+//                GraphNode<T> edgeDestination = edge.getDestination();
+//                Integer edgeDestinationDistance = distances.get(edgeDestination);
+//                if (edge.getWeight() + currentDistance < edgeDestinationDistance) {
+//                    // if the distance is shorter
+//                    distances.put(edgeDestination, edge.getWeight() + currentDistance);
+//                    previousNodes.put(edgeDestination, currentNode);
+//                }
+//
+//            }
+//
+//            unvisitedNodes.remove(currentNode);
+//
+//        }
+//
+//        throw new Exception("No Short path was found");
+//    }
+//
 
 }

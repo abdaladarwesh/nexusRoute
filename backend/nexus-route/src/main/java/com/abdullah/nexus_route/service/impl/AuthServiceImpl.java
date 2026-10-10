@@ -1,15 +1,15 @@
 package com.abdullah.nexus_route.service.impl;
 
-import com.abdullah.nexus_route.dto.AuthResponse;
-import com.abdullah.nexus_route.dto.LoginRequest;
-import com.abdullah.nexus_route.dto.RegisterRequest;
-import com.abdullah.nexus_route.dto.UserDto;
+import com.abdullah.nexus_route.dto.response.AuthResponse;
+import com.abdullah.nexus_route.dto.request.LoginRequest;
+import com.abdullah.nexus_route.dto.request.RegisterRequest;
+import com.abdullah.nexus_route.dto.response.UserResponse;
 import com.abdullah.nexus_route.entity.Role;
 import com.abdullah.nexus_route.entity.User;
 import com.abdullah.nexus_route.exception.UserAlreadyExistsException;
 import com.abdullah.nexus_route.repository.UserRepository;
+import com.abdullah.nexus_route.security.JwtService;
 import com.abdullah.nexus_route.service.AuthService;
-import com.abdullah.nexus_route.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(jwtToken)
                 .tokenType("Bearer")
                 .expiresIn(jwtService.getExpirationTime())
-                .user(UserDto.fromEntity(savedUser))
+                .user(UserResponse.fromEntity(savedUser))
                 .build();
     }
 
@@ -80,12 +80,12 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(jwtToken)
                 .tokenType("Bearer")
                 .expiresIn(jwtService.getExpirationTime())
-                .user(UserDto.fromEntity(user))
+                .user(UserResponse.fromEntity(user))
                 .build();
     }
 
     @Override
-    public UserDto getCurrentUser(User user) {
-        return UserDto.fromEntity(user);
+    public UserResponse getCurrentUser(User user) {
+        return UserResponse.fromEntity(user);
     }
 }
