@@ -2,10 +2,17 @@ package com.abdullah.nexus_route.dto.response;
 
 import com.abdullah.nexus_route.dto.response.AddressResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
+@Builder
 public class PlaceResponse {
 
     @JsonProperty("place_id")

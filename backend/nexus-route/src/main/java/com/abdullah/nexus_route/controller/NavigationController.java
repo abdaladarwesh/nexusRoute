@@ -1,5 +1,6 @@
 package com.abdullah.nexus_route.controller;
 
+import com.abdullah.nexus_route.dto.response.ApiResponse;
 import com.abdullah.nexus_route.entity.CityNode;
 import com.abdullah.nexus_route.exception.LocationNotFoundException;
 import com.abdullah.nexus_route.exception.NoShortPathWasFoundException;
@@ -17,11 +18,14 @@ public class NavigationController {
     private final GraphService graphService;
 
     @GetMapping
-    public ResponseEntity<List<CityNode>> findShortestPath(@RequestParam Long startId, @RequestParam Long destinationId) throws LocationNotFoundException, NoShortPathWasFoundException {
+    public ResponseEntity<ApiResponse<List<CityNode>>> findShortestPath(@RequestParam Long startId, @RequestParam Long destinationId) throws LocationNotFoundException, NoShortPathWasFoundException {
         return ResponseEntity.ok(
-                graphService.findShortestPath(startId, destinationId).getPath()
+                ApiResponse.<List<CityNode>>builder()
+                        .data(graphService.findShortestPath(startId, destinationId).getPath())
+                        .message("Shortest path retrieved successfully")
+                        .metadata(null)
+                        .status("success")
+                        .build()
         );
     }
-
-
 }

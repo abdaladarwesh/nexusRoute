@@ -44,6 +44,14 @@ public class GraphServiceImpl implements GraphService {
         }).join();
     }
 
+    public Long getNodeCount(){
+        return cityNodeRepository.count();
+    }
+
+    public Long getEdgeCount(){
+        return cityEdgeRepository.count();
+    }
+
     @Override
     @Transactional(readOnly = true)
     @Async

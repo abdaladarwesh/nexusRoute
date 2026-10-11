@@ -17,20 +17,20 @@ import java.time.LocalDateTime;
 public class OrderRequest {
 
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "pickupNodeId is required!")
+    @NotBlank(message = "pickupNodeId is required!")
     private Long pickupNodeId;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "destination is required!")
+    @NotBlank(message = "destination is required!")
     private Long destinationNodeId;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "status is required!")
+    @NotBlank(message = "status is required!")
     private OrderStatus status;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "priority is required!")
+    @NotBlank(message = "priority is required!")
     private OrderPriority priority;
 
 }

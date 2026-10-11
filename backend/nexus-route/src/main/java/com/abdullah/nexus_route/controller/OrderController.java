@@ -1,6 +1,7 @@
 package com.abdullah.nexus_route.controller;
 
 import com.abdullah.nexus_route.dto.request.OrderRequest;
+import com.abdullah.nexus_route.dto.response.ApiResponse;
 import com.abdullah.nexus_route.dto.response.OrderDispatchResponse;
 import com.abdullah.nexus_route.mappers.OrderMapper;
 import com.abdullah.nexus_route.service.OrderService;
@@ -21,13 +22,20 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @PostMapping
-    public ResponseEntity<OrderDispatchResponse> dispatchOrders(@RequestBody List<OrderRequest> request){
+    public ResponseEntity<ApiResponse<OrderDispatchResponse>> dispatchOrders(@RequestBody List<OrderRequest> request) {
         orderService.dispatchOrdersAsync(orderMapper.toEntity(request));
 
+        OrderDispatchResponse dispatchResponse = OrderDispatchResponse.builder()
+                .message("Order Dispatch intiated")
+                .statusCode(200)
+                .build();
+
         return ResponseEntity.ok(
-                OrderDispatchResponse.builder()
-                        .message("Order Dispatch intiated")
-                        .statusCode(200)
+                ApiResponse.<OrderDispatchResponse>builder()
+                        .data(dispatchResponse)
+                        .message("Order dispatch initiated successfully")
+                        .metadata(null)
+                        .status("success")
                         .build()
         );
     }

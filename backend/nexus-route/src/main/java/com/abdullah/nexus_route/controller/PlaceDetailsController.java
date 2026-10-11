@@ -1,5 +1,6 @@
 package com.abdullah.nexus_route.controller;
 
+import com.abdullah.nexus_route.dto.response.ApiResponse;
 import com.abdullah.nexus_route.dto.response.PlaceResponse;
 import com.abdullah.nexus_route.service.PlaceDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,14 @@ public class PlaceDetailsController {
     private final PlaceDetailsService placeDetailsService;
 
     @GetMapping
-    public ResponseEntity<PlaceResponse> getPlaceDetails(@RequestParam Double lon, @RequestParam Double lat){
+    public ResponseEntity<ApiResponse<PlaceResponse>> getPlaceDetails(@RequestParam Double lon, @RequestParam Double lat) {
         return ResponseEntity.ok(
-                placeDetailsService.getPlaceDetailsByLonAndLat(lon, lat)
+                ApiResponse.<PlaceResponse>builder()
+                        .data(placeDetailsService.getPlaceDetailsByLonAndLat(lon, lat))
+                        .message("Place details retrieved successfully")
+                        .metadata(null)
+                        .status("success")
+                        .build()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.abdullah.nexus_route.controller;
 
+import com.abdullah.nexus_route.dto.response.ApiResponse;
 import com.abdullah.nexus_route.dto.response.AuthResponse;
 import com.abdullah.nexus_route.dto.request.LoginRequest;
 import com.abdullah.nexus_route.dto.request.RegisterRequest;
@@ -21,17 +22,38 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping({"/signup", "/register"})
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.<AuthResponse>builder()
+                        .data(authService.register(request))
+                        .message("User created successfully")
+                        .metadata(null)
+                        .status("success")
+                        .build()
+        );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.<AuthResponse>builder()
+                        .data(authService.login(request))
+                        .message("User logged in successfully")
+                        .metadata(null)
+                        .status("success")
+                        .build()
+        );
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(authService.getCurrentUser(user));
+    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(
+                ApiResponse.<UserResponse>builder()
+                        .data(authService.getCurrentUser(user))
+                        .message("User logged in successfully")
+                        .metadata(null)
+                        .status("success")
+                        .build()
+        );
     }
 }
